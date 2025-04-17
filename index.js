@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -6,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/User');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
@@ -17,7 +18,7 @@ app.use((req, res, next) => {
 });
 
 // MongoDB Connection
-mongoose.connect('mongodb://127.0.0.1:27017/mongoshh', {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {
@@ -27,7 +28,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mongoshh', {
   process.exit(1);
 });
 
-const JWT_SECRET = 'your-secret-key'; // In production, use environment variables
+const JWT_SECRET = process.env.JWT_SECRET; // In production, use environment variables
 
 // API Routes
 app.get('/api/users', async (req, res) => {
@@ -65,7 +66,7 @@ app.get('/api/users', async (req, res) => {
 
 // Session middleware - after API routes
 app.use(session({
-  secret: 'your-secret-key',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   store: new session.MemoryStore(),
